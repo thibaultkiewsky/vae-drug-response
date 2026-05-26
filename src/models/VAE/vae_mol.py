@@ -36,8 +36,8 @@ OUTPUT_ACTIVATION = "sigmoid"
 LAMBDA_KL_INIT = 1e-4
 
 LEARNING_RATE = 1e-3
-BATCH_SIZE    = 256
-EPOCHS        = 50
+BATCH_SIZE    = 250
+EPOCHS        = 200
 
 
 # ── Création du VAE moléculaire ───────────────────────────────────────────────
@@ -87,11 +87,14 @@ class KLAnnealingCallback(keras.callbacks.Callback):
 
 #── Entraînement (à décommenter quand les données sont prêtes) ────────────────
 
+import pandas as pd
 import numpy as np
 
-# Charger les fingerprints depuis data/processed/
+df = pd.read_csv("data/data_mol/processed/PRISM_fingerprints.csv")
+
+fingerprints = df.iloc[:, 2:].to_numpy(dtype=float)
 # Shape attendue : (n_molecules, 2048) — valeurs 0.0 ou 1.0
-fingerprints = np.load("data/processed/fingerprints_train.npy").astype("float32")
+# fingerprints = np.load("data/data_mol/processed/PRISM_fingerprints.csv").astype("float32")
 
 kl_callback = KLAnnealingCallback(lambda_kl_max=1e-3, kl_warmup_epochs=10)
 
