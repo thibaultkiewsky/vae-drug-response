@@ -220,3 +220,14 @@ __marimo__/
 
 #A la mano
 *.h5ad
+# datasets lourds
+data/
+results/
+
+# modèles
+*.weights.h5
+
+# fichiers lourds spécifiques
+*.csv
+*.gz
+*.pdf
