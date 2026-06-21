@@ -276,3 +276,25 @@ class VAE(keras.Model):
         print("DÉCODEUR")
         print("=" * 60)
         self.decoder.summary()
+
+
+class KLAnnealingCallback(keras.callbacks.Callback):
+    """Augmente lambda_kl linéairement de 0 à lambda_kl_max
+    sur les premières kl_warmup_epochs époques.
+
+    Inspiré de la pratique standard pour les VAE sur données biologiques.
+    """
+
+    def __init__(self, lambda_kl_max=1e-3, kl_warmup_epochs=10):
+        super().__init__()
+        self.lambda_kl_max     = lambda_kl_max
+        self.kl_warmup_epochs  = kl_warmup_epochs
+
+    def on_epoch_begin(self, epoch, logs=None):
+        # Augmentation linéaire : 0 → lambda_kl_max sur kl_warmup_epochs
+        new_lambda = min(
+            self.lambda_kl_max,
+            self.lambda_kl_max * (epoch + 1) / self.kl_warmup_epochs
+        )
+        self.model.lambda_kl = new_lambda
+        print(f"\n[KL Annealing] Époque {epoch+1} — lambda_kl = {new_lambda:.2e}")
